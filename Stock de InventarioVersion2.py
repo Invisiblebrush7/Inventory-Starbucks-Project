@@ -3,8 +3,6 @@ import matplotlib.pyplot as plt
 from math import ceil
 import time
 
-
-
 Excel_File = 'InventarioVersion2.xlsx'
 Lista = pd.read_excel(Excel_File,'Inventario')  #Inventory Data Frame
 Nomenclatura = pd.read_excel(Excel_File,'Nomenclatura')  #Nomenclatura Data Frame
@@ -21,8 +19,6 @@ while(Indice<nRows):
 
 for Columna in Lista.iloc[1]:
     nCols +=1
-
-
 
 #Sales Analysis Feature
 
@@ -67,7 +63,7 @@ def Menu():
     print("2. Análisis de diversos productos")
     print("3. Análisis de todos los productos.")
     print("4. Ver toda la nomenclatura de los productos.")
-    print("5. Probar Sales Analysis")
+    print("5. Análisis de Ventas")
     print("6. Salir")
     print("-"*50)
     while (True):
