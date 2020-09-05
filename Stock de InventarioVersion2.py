@@ -219,6 +219,7 @@ def Regresion_Lineal (index):
 Opcion = Menu()
 while (Opcion != 6):
     Lista_De_Productos = []
+    #-----------------------Opcion 1 --------------------------
     if (Opcion == 1):
         Producto = input("Ingresa el producto a analizar:")
         while (Comprobar_Nomenclatura(Producto) == 0):
@@ -227,7 +228,7 @@ while (Opcion != 6):
         if (Producto != "SALIR"):
             Lista_De_Productos.append(Producto)
             Analisis(Lista_De_Productos)
-              
+    #-----------------------Opcion 2 --------------------------
     elif (Opcion == 2):
         Producto = input("Ingresa uno de los productos a analizar o ingrese NA para finalizar la lista:")        
         while (Producto != "NA"):
@@ -244,7 +245,7 @@ while (Opcion != 6):
                 print("Producto ya en la lista.")
             Producto = input("Ingresa uno de los productos a analizar o ingrese NA para finalizar la lista:")                    
         Analisis(Lista_De_Productos)
-
+    #-----------------------Opcion 3 --------------------------
     elif (Opcion == 3):
         Indice = 0
         while (Indice < nRows):
@@ -252,11 +253,29 @@ while (Opcion != 6):
             Lista_De_Productos.append(Producto)
             Indice +=1
         Analisis(Lista_De_Productos)
+    #-----------------------Opcion 4 --------------------------
     elif (Opcion == 4):
         Imprimir_Nomenclatura()
+    #-----------------------Opcion 5 --------------------------
     elif (Opcion == 5):
-        Sales_Analysis(['PC','PE'])
-            
+        Producto = input("Ingresa uno de los productos a analizar o ingrese NA para finalizar la lista:")        
+        while (Producto != "NA"):
+            Estado = Comprobar_Nomenclatura(Producto)
+            Existencia = Comprobar_Existencia_enLista(Lista_De_Productos,Producto)
+            if (Estado == 0):
+                print ("Producto No Válido. Revise la tabla de Nomenclaturas para más información.")
+                print("")
+                time.sleep(1)
+            elif (Estado == 1 and Existencia == 0):
+                Lista_De_Productos.append(Producto)
+                print("Alimentos por analizar:",Lista_De_Productos)
+            elif (Estado == 1 and Existencia == 1 ):
+                print("Producto ya en la lista.")
+            Producto = input("Ingresa uno de los productos a analizar o ingrese NA para finalizar la lista:")
+        Sales_Analysis(Lista_De_Productos)
+        print("-"*20,"Fin de analisis","-"*20)
+        time.sleep(1)
+    
     
     Opcion = Continuar()
     if (Opcion == 1):
