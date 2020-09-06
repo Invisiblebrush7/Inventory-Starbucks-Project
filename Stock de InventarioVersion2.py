@@ -3,12 +3,10 @@ import matplotlib.pyplot as plt
 from math import ceil
 import time
 
-
-
 Excel_File = 'InventarioVersion2.xlsx'
-Lista = pd.read_excel(Excel_File,'Inventario')
-Nomenclatura = pd.read_excel(Excel_File,'Nomenclatura')
-Duracion = pd.read_excel(Excel_File,'Duracion')
+Lista = pd.read_excel(Excel_File,'Inventario')  #Inventory Data Frame
+Nomenclatura = pd.read_excel(Excel_File,'Nomenclatura')  #Nomenclatura Data Frame
+Duracion = pd.read_excel(Excel_File,'Duracion')     #Expiration Dates Data Frame
 
 nRows = len(Lista.axes[0])
 nCols = 0
@@ -22,6 +20,10 @@ while(Indice<nRows):
 for Columna in Lista.iloc[1]:
     nCols +=1
 
+
+
+
+
 def Menu():
     print("-"*50)
     print("Bienvenido al sistema de reportes de alimentos.")
@@ -31,7 +33,8 @@ def Menu():
     print("2. Análisis de diversos productos")
     print("3. Análisis de todos los productos.")
     print("4. Ver toda la nomenclatura de los productos.")
-    print("5. Salir")
+    print("5. Análisis de Ventas")
+    print("6. Salir")
     print("-"*50)
     while (True):
         try:
@@ -179,9 +182,54 @@ def Regresion_Lineal (index):
     plt.plot(X,Y)
     plt.show()
 
+#Sales Analysis Feature
+
+#First Feature: Graph analysis of your sales
+#Lista_Nomenclatura es una lista con todas las Nomenclaturas en el File
+#Lista.iloc[0] ---> First Row of the Lista Dataframe
+#Nombre, Inicial, Domingo1,D2,D3,D4
+
+
+def Sales_Graphs(Lista_Ventas, Producto):
+    #Lista de Ventas = Y's
+    #Domingos = X's
+    Valores_X = [1,2,3,4]
+
+    plt.plot(Valores_X,Lista_Ventas,color="green")
+    plt.scatter(Valores_X,Lista_Ventas,color="red")
+    plt.title('Ventas de ' + str(Producto))
+    plt.ylabel('Cantidad')
+    plt.xlabel('Semanas')
+    plt.show()
+
+def Sales_Subplots(Lista):
+    Valores_X = [1,2,3,4]
+    if (len(Lista) > 1):
+        plt.figure()
+        for index in range(0,len(Lista)-1):
+            plt.subplot(1,len(Lista),index+1)
+            plt.plot(Valores_X,Lista[index])
+
+def Sales_Analysis(Lista_De_Productos):
+    Matriz_Ventas = []
+    for index in range(0,nRows):
+        Item_Actual = Lista.iloc[index]
+        if (Item_Actual[0] in Lista_De_Productos ):
+            Ventas = []
+            Cantidad_Anterior = Item_Actual[1]
+            for Columna in Item_Actual[2:6]:
+                Venta = abs(Columna-Cantidad_Anterior)
+                Ventas.append(Venta)
+                Cantidad_Anterior = Columna
+            Sales_Graphs(Ventas,Item_Actual[0])
+            Matriz_Ventas.append(Ventas)
+    Sales_Subplots(Matriz_Ventas)
+
+
 Opcion = Menu()
-while (Opcion != 5):
+while (Opcion != 6):
     Lista_De_Productos = []
+    #-----------------------Opcion 1 --------------------------
     if (Opcion == 1):
         Producto = input("Ingresa el producto a analizar:")
         while (Comprobar_Nomenclatura(Producto) == 0):
@@ -190,7 +238,7 @@ while (Opcion != 5):
         if (Producto != "SALIR"):
             Lista_De_Productos.append(Producto)
             Analisis(Lista_De_Productos)
-              
+    #-----------------------Opcion 2 --------------------------
     elif (Opcion == 2):
         Producto = input("Ingresa uno de los productos a analizar o ingrese NA para finalizar la lista:")        
         while (Producto != "NA"):
@@ -207,7 +255,7 @@ while (Opcion != 5):
                 print("Producto ya en la lista.")
             Producto = input("Ingresa uno de los productos a analizar o ingrese NA para finalizar la lista:")                    
         Analisis(Lista_De_Productos)
-
+    #-----------------------Opcion 3 --------------------------
     elif (Opcion == 3):
         Indice = 0
         while (Indice < nRows):
@@ -215,36 +263,35 @@ while (Opcion != 5):
             Lista_De_Productos.append(Producto)
             Indice +=1
         Analisis(Lista_De_Productos)
+    #-----------------------Opcion 4 --------------------------
     elif (Opcion == 4):
         Imprimir_Nomenclatura()
-            
+    #-----------------------Opcion 5 --------------------------
+    elif (Opcion == 5):
+        Producto = input("Ingresa uno de los productos a analizar o ingrese NA para finalizar la lista:")        
+        while (Producto != "NA"):
+            Estado = Comprobar_Nomenclatura(Producto)
+            Existencia = Comprobar_Existencia_enLista(Lista_De_Productos,Producto)
+            if (Estado == 0):
+                print ("Producto No Válido. Revise la tabla de Nomenclaturas para más información.")
+                print("")
+                time.sleep(1)
+            elif (Estado == 1 and Existencia == 0):
+                Lista_De_Productos.append(Producto)
+                print("Alimentos por analizar:",Lista_De_Productos)
+            elif (Estado == 1 and Existencia == 1 ):
+                print("Producto ya en la lista.")
+            Producto = input("Ingresa uno de los productos a analizar o ingrese NA para finalizar la lista:")
+        Sales_Analysis(Lista_De_Productos)
+        print("-"*20,"Fin de analisis","-"*20)
+        time.sleep(1)    
+        
+    
     
     Opcion = Continuar()
     if (Opcion == 1):
         Opcion = Menu()
     elif (Opcion == 2):
-        Opcion = 5
+        Opcion = 6
         print ("Gracias por usar los servicios de Bets!")
         print ("Hasta luego!")
-        
-
-
-      
-    elif (Opcion == 2):
-        Producto = input("Ingresa uno de los productos a analizar o ingrese NA para finalizar la lista:")
-        while (Producto != "NA"):
-            Estado = Comprobar_Nomenclatura(Producto)
-            if (Estado == 0): #Aka, el nombre es válido.
-                Lista_De_Productos.append(Producto)
-                print ("Alimentos a analizar:",Lista_De_Productos)
-            elif (Estado == 1): #Aka, el nombre no es válido
-                print ("Producto No Válido. Revise la tabla de Nomenclaturas para más información.")
-                print("")
-                time.sleep(1)
-            Producto = input("Ingresa uno de los productos a analizar o ingrese NA para finalizar la lista:")
-        if(len(Lista_De_Productos) > 0):
-            Analisis(Lista_De_Productos)
-        else:
-            print("No se puede realizar un análisis con una lista vacía.")
-
-        
