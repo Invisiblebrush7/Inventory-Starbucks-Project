@@ -20,36 +20,6 @@ while(Indice<nRows):
 for Columna in Lista.iloc[1]:
     nCols +=1
 
-#Sales Analysis Feature
-
-#First Feature: Graph analysis of your sales
-#Lista_Nomenclatura es una lista con todas las Nomenclaturas en el File
-#Lista.iloc[0] ---> First Row of the Lista Dataframe
-#Nombre, Inicial, Domingo1,D2,D3,D4
-
-def Sales_Graphs(Lista_Ventas, Producto):
-    #Lista de Ventas = Y's
-    #Domingos = X's
-    Valores_X = [1,2,3,4]
-
-    plt.scatter(Valores_X,Lista_Ventas)
-    plt.title('Ventas de ' + str(Producto))
-    plt.ylabel('Cantidad')
-    plt.xlabel('Semanas')
-    plt.show()
-    
-
-def Sales_Analysis(Lista_De_Productos):
-    for index in range(0,nRows):
-        Item_Actual = Lista.iloc[index]
-        if (Item_Actual[0] in Lista_De_Productos ):
-            Ventas = []
-            Cantidad_Anterior = Item_Actual[1]
-            for Columna in Item_Actual[2:6]:
-                Venta = abs(Columna-Cantidad_Anterior)
-                Ventas.append(Venta)
-                Cantidad_Anterior = Columna
-            Sales_Graphs(Ventas,Item_Actual[0])
 
 
 
@@ -212,6 +182,50 @@ def Regresion_Lineal (index):
     plt.plot(X,Y)
     plt.show()
 
+#Sales Analysis Feature
+
+#First Feature: Graph analysis of your sales
+#Lista_Nomenclatura es una lista con todas las Nomenclaturas en el File
+#Lista.iloc[0] ---> First Row of the Lista Dataframe
+#Nombre, Inicial, Domingo1,D2,D3,D4
+
+
+def Sales_Graphs(Lista_Ventas, Producto):
+    #Lista de Ventas = Y's
+    #Domingos = X's
+    Valores_X = [1,2,3,4]
+
+    plt.plot(Valores_X,Lista_Ventas,color="green")
+    plt.scatter(Valores_X,Lista_Ventas,color="red")
+    plt.title('Ventas de ' + str(Producto))
+    plt.ylabel('Cantidad')
+    plt.xlabel('Semanas')
+    plt.show()
+
+def Sales_Subplots(Lista):
+    Valores_X = [1,2,3,4]
+    if (len(Lista) > 1):
+        plt.figure()
+        for index in range(0,len(Lista)-1):
+            plt.subplot(1,len(Lista),index+1)
+            plt.plot(Valores_X,Lista[index])
+
+def Sales_Analysis(Lista_De_Productos):
+    Matriz_Ventas = []
+    for index in range(0,nRows):
+        Item_Actual = Lista.iloc[index]
+        if (Item_Actual[0] in Lista_De_Productos ):
+            Ventas = []
+            Cantidad_Anterior = Item_Actual[1]
+            for Columna in Item_Actual[2:6]:
+                Venta = abs(Columna-Cantidad_Anterior)
+                Ventas.append(Venta)
+                Cantidad_Anterior = Columna
+            Sales_Graphs(Ventas,Item_Actual[0])
+            Matriz_Ventas.append(Ventas)
+    Sales_Subplots(Matriz_Ventas)
+
+
 Opcion = Menu()
 while (Opcion != 6):
     Lista_De_Productos = []
@@ -270,7 +284,8 @@ while (Opcion != 6):
             Producto = input("Ingresa uno de los productos a analizar o ingrese NA para finalizar la lista:")
         Sales_Analysis(Lista_De_Productos)
         print("-"*20,"Fin de analisis","-"*20)
-        time.sleep(1)
+        time.sleep(1)    
+        
     
     
     Opcion = Continuar()
